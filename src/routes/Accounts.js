@@ -3,92 +3,36 @@ const router = express.Router()
 const Account = require("../models/Account")
 const { v4: uuidv4 } = require("uuid")
 const get_python = require("../utils/pythondict.js")
+const AccountService = require("../services/AccountService")
+
+AccountServiceLayer = new AccountService()
 
 router.get("", async (req, res) => {
-  console.log("entre al get all")
-  let list_account = await Account.find({ active: true })
-  debugger
-  console.log(list_account)
-  res.json({ data: list_account })
-})
-
-router.post("", async (req, res) => {
-  data = req.body
-  console.log("aca esta la data")
-  console.log(data)
-  counts_user = await Account.countDocuments({ email: req.body.email })
-  console.log("ese es el count user", counts_user)
-  if (counts_user >= 1) {
-    res.status(400).json({ message: "Usuario registrado" })
-  }
-  try {
-    var new_account = new Account(req.body)
-    new_account.account_id = uuidv4()
-    new_account.active = true
-    new_account.is_admin = false
-    console.log("antes")
-    new_account.password_hash = new_account.setPassword(req.body.password)
-    console.log(new_account)
-    await new_account.save()
-    res.json(new_account)
-  } catch (err) {
-    res.json({ message: err })
-  }
+  const list_account = await AccountServiceLayer.get_all_accounts()
+  res.status(200).json({ data: list_account })
 })
 
 router.get("/:account_id", async (req, res) => {
-  const account = await Account.findOne({
-    account_id: req.params.account_id,
-    active: true,
-  })
-  if (!account) {
-    res.json({ message: "bad id" })
-  }
-  res.json(account)
+  const response = await AccountServiceLayer.get_one_account(
+    req.params.account_id
+  )
+  res.status(response.message ? 400 : 200).json(response)
 })
 
 router.put("/:account_id", async (req, res) => {
-  try {
-    console.log("entre al put")
-    let account = await Account.findOne({
-      account_id: req.params.account_id,
-      active: true,
-    })
-    console.log(account)
-    const request = req.body
-    console.log("la request", request)
-    if (!account) {
-      res.json({ message: "bad id" })
-    } else {
-      account.first_name = get_python(request, "first_name", account.first_name)
-      account.last_name = get_python(request, "last_name", account.last_name)
-      account.email = get_python(request, "email", account.email)
-      await account.save()
-      res.json({ message: "ok" })
-    }
-  } catch (err) {
-    res.json({ message: "error en update" })
-  }
+  const response = await AccountServiceLayer.update_account(
+    req.params.account_id,
+    req.body
+  )
+  return res
+    .status(response.message === "Update Successffully" ? 200 : 400)
+    .json(response)
 })
 
 router.delete("/:account_id", async (req, res) => {
-  try {
-    console.log("entre delete")
-    let account = await Account.findOne({ account_id: req.params.account_id })
-    const request = req.body
-    console.log(account)
-    if (!account) {
-      res.json({ message: "bad account_id" })
-    }
-    if (!account.active) {
-      res.json({ message: "account is already deleted" })
-    }
-    account.active = false
-    await account.save()
-    res.status(204)
-  } catch (err) {
-    res.json({ message: "error en update" })
-  }
+  console.log('entre delete')
+  const status = await AccountServiceLayer.delete_account(req.params.account_id)
+  res.status(status? 204: 400).json(status? {message: 'Delete Successfully'} : {message: 'Error in delete'})
 })
 
 module.exports = router
