@@ -10,20 +10,18 @@ const secret = process.env.JWT_SECRET
 AuthService = new Auth()
 AccountServiceLayer = new AccountService()
 
-console.log("esta es la secret key", secret)
 router.post("/login", async (req, res) => {
   const response = await AuthService.login(req.body.email, req.body.password)
   return res
-    .status(response.message === "Login succesffully" ? 200 : 400)
+    .status(response.message === "Login succesffully" ? 200 : 404)
     .json(response)
 })
-
 
 router.post("/register", async (req, res) => {
   const response = await AccountServiceLayer.register(req.body)
   return res
-  .status(response.message === "Register complete" ? 200 : 400)
-  .json(response)
+    .status(response.message === "Register complete" ? 200 : 400)
+    .json(response)
 })
 
 module.exports = router

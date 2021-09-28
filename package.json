@@ -24,6 +24,8 @@
     "nodemon": "^2.0.12",
     "passport-local": "^1.0.0",
     "port": "^0.8.1",
+    "swagger-jsdoc": "^6.1.0",
+    "swagger-ui-express": "^4.1.6",
     "uuid": "^8.3.2"
   }
 }

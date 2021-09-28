@@ -7,6 +7,7 @@ const AccountService = require("../services/AccountService")
 
 AccountServiceLayer = new AccountService()
 
+
 router.get("", async (req, res) => {
   const list_account = await AccountServiceLayer.get_all_accounts()
   res.status(200).json({ data: list_account })
