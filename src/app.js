@@ -1,29 +1,48 @@
 const express = require("express")
-
 const app = express()
+require("./utils/mongo")
 var cors = require("cors")
 const router = express.Router()
 const Accounts = require("./routes/Accounts")
 const Auth = require("./routes/Auth")
+const swaggerJsDoc = require("swagger-jsdoc")
+const swaggerUi = require("swagger-ui-express")
 
-const mongoose = require("mongoose")
+/* const docs = require("./documentation") */
 
-mongoose
-  .connect("mongodb://localhost:27017/efi", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log("Conexion a base de datos"))
-  .catch((e) => console.log(e))
+const definition = {
+  info: {
+    title: "Account-api",
+    desciption: "Account api for efi programacion 3",
+    contact: [
+      {
+        name: "Marcos Olmedo",
+        email: "m.olmedo@itecriocuarto.org.ar",
+      },
+      {
+        name: "Paula ",
+        email: "p.@itecriocuarto.org.ar",
+      },
+      {
+        name: "Daniel Galetto",
+        email: "d.galetto@itecriocuarto.org.ar",
+      },
+    ],
+    servers: ["http://localhost:3001"],
+  },
+}
+const options = {
+  definition,
+  apis: ["app.js"],
+}
 
 app.use(cors())
 app.use(express.json())
 
-/* Routes */
 app.use("/accounts", Accounts)
 app.use("/auth", Auth)
 
-// settings
+// app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs))
 app.set("port", process.env.PORT || 3001)
 
 app.listen(app.get("port"), () => {

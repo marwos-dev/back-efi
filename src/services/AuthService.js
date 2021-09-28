@@ -1,7 +1,7 @@
 const express = require("express")
 
 const Account = require("../models/Account")
-var jwt = require('jwt-simple');
+let jwt = require('jwt-simple');
 const secret = process.env.JWT_SECRET || 'ALTACONTRAPAPA'
 
 class Auth {
