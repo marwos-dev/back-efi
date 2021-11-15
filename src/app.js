@@ -5,6 +5,7 @@ var cors = require("cors")
 const router = express.Router()
 const Accounts = require("./routes/Accounts")
 const Auth = require("./routes/Auth")
+const ListTask = require('./routes/ListTask')
 const swaggerJsDoc = require("swagger-jsdoc")
 const swaggerUi = require("swagger-ui-express")
 
@@ -41,6 +42,7 @@ app.use(express.json())
 
 app.use("/accounts", Accounts)
 app.use("/auth", Auth)
+app.use("/list_task", ListTask)
 
 // app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs))
 app.set("port", process.env.PORT || 3001)
